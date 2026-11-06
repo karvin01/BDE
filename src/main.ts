@@ -34,6 +34,25 @@ const todoList = document.getElementById('todo-list') as HTMLUListElement;
 const errorMessage = document.getElementById('error-message') as HTMLParagraphElement;
 const sortPriorityBtn = document.getElementById('sort-priority-btn') as HTMLButtonElement;
 const clearStorageBtn = document.getElementById('clear-storage-btn') as HTMLButtonElement;
+const progressBarFill = document.getElementById('progress-bar-fill') as HTMLDivElement;
+const progressText = document.getElementById('progress-text') as HTMLSpanElement;
+
+// Option 10: Update the progress bar as todos are marked completed or incomplete
+const updateProgressBar = (): void => {
+    if (!progressBarFill || !progressText) return;
+
+    if (todos.length === 0) {
+        progressBarFill.style.width = '0%';
+        progressText.textContent = '0% completed';
+        return;
+    }
+
+    const completedCount = todos.filter(t => t.completed).length;
+    const percentage = Math.round((completedCount / todos.length) * 100);
+
+    progressBarFill.style.width = `${percentage}%`;
+    progressText.textContent = `${percentage}% completed (${completedCount}/${todos.length})`;
+};
 
 /**
  * Checks whether a given ISO date string is before the current day at midnight.
@@ -150,6 +169,9 @@ const renderTodos = (): void => {
 
         todoList.appendChild(li);
     });
+
+    // Update progress bar on each render
+    updateProgressBar();
 };
 
 // Form submit event and input validation
