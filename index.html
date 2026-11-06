@@ -29,8 +29,16 @@
         Please enter a todo item
       </p>
 
+      <div class="progress-container">
+        <div class="progress-bar-bg">
+          <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+        <span id="progress-text" class="progress-text">0% completed</span>
+      </div>
+
       <div class="actions-bar">
         <button type="button" id="sort-priority-btn" class="secondary-btn">Sort: High → Low</button>
+        <button type="button" id="clear-storage-btn" class="secondary-btn danger-btn">Clear All</button>
       </div>
 
       <ul class="todo-list" id="todo-list"></ul>
