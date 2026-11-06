@@ -13,8 +13,19 @@
 
       <form class="todo-form">
         <input type="text" placeholder="Add a new todo" id="todo-input">
+        
+        <select id="priority-select">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+
         <button type="submit">Add</button>
       </form>
+
+      <div class="actions-bar">
+        <button type="button" id="sort-priority-btn" class="secondary-btn">Sort by Priority</button>
+      </div>
 
       <ul class="todo-list" id="todo-list"></ul>
     </div>
