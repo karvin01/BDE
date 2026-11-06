@@ -17,6 +17,7 @@ const prioritySelect = document.getElementById('priority-select') as HTMLSelectE
 const dueDateInput = document.getElementById('due-date-input') as HTMLInputElement;
 const todoForm = document.querySelector('.todo-form') as HTMLFormElement;
 const todoList = document.getElementById('todo-list') as HTMLUListElement;
+const errorMessage = document.getElementById('error-message') as HTMLParagraphElement;
 const sortPriorityBtn = document.getElementById('sort-priority-btn') as HTMLButtonElement;
 
 const isOverdue = (dueDateStr?: string): boolean => {
@@ -97,15 +98,25 @@ const renderTodos = (): void => {
 
 todoForm.addEventListener('submit', (event: Event) => {
     event.preventDefault();
-    const text = todoInput.value;
+
+    const text = todoInput.value.trim();
+
+    if (text === '') {
+        if (errorMessage) errorMessage.style.display = 'block';
+        todoInput.style.borderColor = '#f85149';
+        return;
+    }
+
+    if (errorMessage) errorMessage.style.display = 'none';
+    todoInput.style.borderColor = '';
+
     const priority = prioritySelect.value as Priority;
     const dueDate = dueDateInput.value;
 
-    if (text) {
-        addTodo(text, priority, dueDate);
-        todoInput.value = '';
-        dueDateInput.value = '';
-    }
+    addTodo(text, priority, dueDate);
+
+    todoInput.value = '';
+    dueDateInput.value = '';
 });
 
 if (sortPriorityBtn) {
