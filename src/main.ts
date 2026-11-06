@@ -1,6 +1,5 @@
 import './style.css'
 
-//interface structure of the data schema
 interface Todo {
     id: number;
     text: string;
@@ -9,62 +8,66 @@ interface Todo {
 
 let todos: Todo[] = [];
 
-const todoInput = document.getElementById('todo-input') as HTMLInputElement
-const todoForm = document.querySelector('.todo-form') as HTMLFormElement
-const todoList = document.getElementById('todo-list') as HTMLUListElement
+const todoInput = document.getElementById('todo-input') as HTMLInputElement;
+const todoForm = document.querySelector('.todo-form') as HTMLFormElement;
+const todoList = document.getElementById('todo-list') as HTMLUListElement;
 
-const errorMessage = document.getElementById('error-message') as HTMLParagraphElement
-
-
-
-const addTodo = (text:string):void => {
+const addTodo = (text: string): void => {
     const newTodo: Todo = {
-        id:Date.now(), //gguid
+        id: Date.now(),
         text: text,
         completed: false
-    }
-    todos.push(newTodo)
-    console.log(`Todo added: ${todos}`)
+    };
 
+    todos.push(newTodo);
     renderTodos();
-}
+};
 
-const renderTodos = ():void => {
-    //clears the current list, so it doesnt rerender the previous ones again
+const toggleTodo = (id: number): void => {
+    todos = todos.map(todo => {
+        if (todo.id === id) {
+            return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+    });
+    renderTodos();
+};
+
+const removeTodo = (id: number): void => {
+    todos = todos.filter(todo => todo.id !== id);
+    renderTodos();
+};
+
+const renderTodos = (): void => {
     todoList.innerHTML = '';
 
     todos.forEach(todo => {
-        const li = document.createElement('li')
-        li.className = 'todo-item'
-        li.innerHTML = `
-        <span>${todo.text}</span>
-        <button>Remove</button>
-        `
-        addRemoveButtonListener(li, todo.id);
-        todoList.appendChild(li)
-    })
-}
+        const li = document.createElement('li');
+        li.className = 'todo-item';
 
-renderTodos();
+        li.innerHTML = `
+            <input type="checkbox" class="toggle-check" ${todo.completed ? 'checked' : ''}>
+            <span style="${todo.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                ${todo.text}
+            </span>
+            <button class="remove-btn">Remove</button>
+        `;
+
+        const checkbox = li.querySelector('.toggle-check') as HTMLInputElement;
+        checkbox.addEventListener('change', () => toggleTodo(todo.id));
+
+        const removeButton = li.querySelector('.remove-btn') as HTMLButtonElement;
+        removeButton.addEventListener('click', () => removeTodo(todo.id));
+
+        todoList.appendChild(li);
+    });
+};
 
 todoForm.addEventListener('submit', (event: Event) => {
     event.preventDefault();
-
-    const text = todoInput.value.trim()
-
-    if (text !== '') {
-        addTodo(text)
-        todoInput.value = '' //clears the input field after add
+    const text = todoInput.value;
+    if (text) {
+        addTodo(text);
+        todoInput.value = '';
     }
-})
-
-
-const addRemoveButtonListener = (li:HTMLLIElement, id:number):void => {
-    const removeButton = li.querySelector('button');
-    removeButton?.addEventListener('click', () => removeTodo(id)) //only exists when u have li, so you would get error otherwise
-}
-
-const removeTodo = (id:number):void => {
-    todos = todos.filter(todo => todo.id !== id)
-    renderTodos()
-}
+});
