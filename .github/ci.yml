@@ -1,0 +1,53 @@
+# ==============================================================================
+# NAME: The display label that shows up under the "Actions" tab in GitHub.
+# ==============================================================================
+name: CI Pipeline
+
+# ==============================================================================
+# TRIGGERS (on): Defines what GitHub events will automatically run this pipeline.
+# ==============================================================================
+on:
+  # Trigger 1: Whenever anyone pushes code directly to these branches
+  push:
+    branches:
+      - main                     # Production branch
+      - feat/task-enhancements-1 # Feature branch 1 (Toggle, Priority, Due Date, Error Handling)
+      - feat/storage-and-progress# Feature branch 2 (LocalStorage & Progress Bar)
+
+  # Trigger 2: Whenever a Pull Request is opened or updated targeting 'main'
+  pull_request:
+    branches:
+      - main                     # Runs automated checks before PR can be merged
+
+# ==============================================================================
+# JOBS: The tasks the pipeline executes on GitHub's virtual servers.
+# ==============================================================================
+jobs:
+  test-and-build:
+    # Environment: GitHub boots up a clean, temporary virtual machine running Ubuntu Linux
+    runs-on: ubuntu-latest
+
+    # STEPS: Sequential commands executed inside the virtual machine
+    steps:
+      # Step 1: Downloads (clones) your repository code into the runner machine
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Step 2: Installs Node.js v20 on the machine and caches npm packages for faster runs
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # Step 3: Installs the exact dependencies locked in package-lock.json (clean install)
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Runs 'tsc && vite build' to catch any TypeScript type errors or syntax mistakes
+      - name: Verify TypeScript compilation & build
+        run: npm run build
+
+      # Step 5: Runs Vitest in single-run mode (not watch mode) so the pipeline exits when finished
+      - name: Run Vitest unit tests
+        run: npm test -- --run
