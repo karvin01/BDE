@@ -7,22 +7,33 @@ interface Todo {
     text: string;
     completed: boolean;
     priority: Priority;
+    dueDate?: string;
 }
 
 let todos: Todo[] = [];
 
 const todoInput = document.getElementById('todo-input') as HTMLInputElement;
 const prioritySelect = document.getElementById('priority-select') as HTMLSelectElement;
+const dueDateInput = document.getElementById('due-date-input') as HTMLInputElement;
 const todoForm = document.querySelector('.todo-form') as HTMLFormElement;
 const todoList = document.getElementById('todo-list') as HTMLUListElement;
 const sortPriorityBtn = document.getElementById('sort-priority-btn') as HTMLButtonElement;
 
-const addTodo = (text: string, priority: Priority): void => {
+const isOverdue = (dueDateStr?: string): boolean => {
+    if (!dueDateStr) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dueDate = new Date(dueDateStr);
+    return dueDate < today;
+};
+
+const addTodo = (text: string, priority: Priority, dueDate?: string): void => {
     const newTodo: Todo = {
         id: Date.now(),
         text: text,
         completed: false,
-        priority: priority
+        priority: priority,
+        dueDate: dueDate || undefined
     };
 
     todos.push(newTodo);
@@ -60,12 +71,16 @@ const renderTodos = (): void => {
 
     todos.forEach(todo => {
         const li = document.createElement('li');
-        li.className = 'todo-item';
+
+        const overdue = !todo.completed && isOverdue(todo.dueDate);
+        li.className = `todo-item ${overdue ? 'overdue' : ''}`;
+
+        const dateText = todo.dueDate ? ` (Due: ${todo.dueDate}${overdue ? ' - OVERDUE' : ''})` : '';
 
         li.innerHTML = `
             <input type="checkbox" class="toggle-check" ${todo.completed ? 'checked' : ''}>
             <span style="${todo.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
-                ${todo.text} [${todo.priority}]
+                ${todo.text} [${todo.priority}]${dateText}
             </span>
             <button class="remove-btn">Remove</button>
         `;
@@ -84,10 +99,12 @@ todoForm.addEventListener('submit', (event: Event) => {
     event.preventDefault();
     const text = todoInput.value;
     const priority = prioritySelect.value as Priority;
+    const dueDate = dueDateInput.value;
 
     if (text) {
-        addTodo(text, priority);
+        addTodo(text, priority, dueDate);
         todoInput.value = '';
+        dueDateInput.value = '';
     }
 });
 
