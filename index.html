@@ -10,17 +10,30 @@
     <div id="app"></div>
     <div class="container">
       <h1>Todo app</h1>
+
       <form class="todo-form">
-        <input type="text" placeholder="Add a new todo list" id="todo-input">
+        <input type="text" placeholder="Add a new todo" id="todo-input">
+        
+        <select id="priority-select">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+
+        <input type="date" id="due-date-input">
+
         <button type="submit">Add</button>
       </form>
-      <p id="error-message">Please enter todo item</p>
 
-      <ul class="todo-list" id="todo-list">
+      <p id="error-message" style="display: none; color: #ff7b72; font-size: 0.85rem; margin-top: 0.4rem;">
+        Please enter a todo item
+      </p>
 
-      </ul>
+      <div class="actions-bar">
+        <button type="button" id="sort-priority-btn" class="secondary-btn">Sort: High → Low</button>
+      </div>
 
-      <input type="color" id="colorPicker">
+      <ul class="todo-list" id="todo-list"></ul>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
